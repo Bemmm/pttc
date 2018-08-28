@@ -93,24 +93,34 @@ Ext.define('pttc.view.board.BoardController', {
         })
     },
     onSave: function () {
-        Ext.Msg.show({
-            title: 'Commit changes?',
-            message: 'You really want to commit changes?',
-            buttons: Ext.Msg.OKCANCEL,
-            fn: function (btn) {
-                if (btn === 'ok') {
-                    var grid = Ext.ComponentQuery.query('panel > #pttcGrid')[0];
-                    var store = grid.getStore('Records');
-                    store.commitChanges();
-                    Ext.toast({
-                        html: 'Data Saved!',
-                        title: 'Hey!',
-                        width: 200,
-                        align: 't'
-                    });
-                };
-            }
-        });
+        var grid = Ext.ComponentQuery.query('panel > #pttcGrid')[0];
+        var store = grid.getStore('Records');
+        var dirtyRecords = store.getModifiedRecords();
+        if (dirtyRecords.length) {
+            Ext.Msg.show({
+                title: 'Commit changes?',
+                message: 'You really want to commit changes?',
+                buttons: Ext.Msg.OKCANCEL,
+                fn: function (btn) {
+                    if (btn === 'ok') {
+                        store.commitChanges();
+                        Ext.toast({
+                            html: 'Data Saved!',
+                            title: 'Hey!',
+                            width: 200,
+                            align: 't'
+                        });
+                    };
+                }
+            });
+        } else {
+            Ext.Msg.show({
+                title: 'Ooops',
+                message: 'You don\'t have any changes to commit :(',
+                buttons: Ext.Msg.OK
+            });
+        }
+
     },
     onCancel: function () {
         var grid = Ext.ComponentQuery.query('panel > #pttcGrid')[0];
